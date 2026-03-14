@@ -33,7 +33,8 @@ Example:
   process.exit(0);
 }
 
-const toCamelCase = (str: string): string => str.replace(/-([a-z])/g, g => g[1].toUpperCase());
+const toCamelCase = (str: string): string =>
+  str.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
 
 const parseValue = (value: string): any => {
   if (value === "true") return true;
@@ -47,8 +48,10 @@ const parseValue = (value: string): any => {
   return value;
 };
 
+type BuildConfigWithDynamicKeys = Partial<Bun.BuildConfig> & Record<string, unknown>;
+
 function parseArgs(): Partial<Bun.BuildConfig> {
-  const config: Partial<Bun.BuildConfig> = {};
+  const config: BuildConfigWithDynamicKeys = {};
   const args = process.argv.slice(2);
 
   for (let i = 0; i < args.length; i++) {
@@ -81,9 +84,15 @@ function parseArgs(): Partial<Bun.BuildConfig> {
     key = toCamelCase(key);
 
     if (key.includes(".")) {
-      const [parentKey, childKey] = key.split(".");
-      config[parentKey] = config[parentKey] || {};
-      config[parentKey][childKey] = parseValue(value);
+      const [parentKey, childKey] = key.split(".", 2);
+
+      if (parentKey === undefined || childKey === undefined) {
+        continue;
+      }
+
+      const nestedConfig = (config[parentKey] as Record<string, unknown> | undefined) ?? {};
+      nestedConfig[childKey] = parseValue(value);
+      config[parentKey] = nestedConfig;
     } else {
       config[key] = parseValue(value);
     }
@@ -102,7 +111,13 @@ const formatFileSize = (bytes: number): string => {
     unitIndex++;
   }
 
-  return `${size.toFixed(2)} ${units[unitIndex]}`;
+  const unit = units[unitIndex];
+
+  if (unit === undefined) {
+    throw new Error(`Missing file size unit for index ${unitIndex}`);
+  }
+
+  return `${size.toFixed(2)} ${unit}`;
 };
 
 console.log("\n🚀 Starting build process...\n");

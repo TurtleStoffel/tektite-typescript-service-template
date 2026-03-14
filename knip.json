@@ -1,8 +1,5 @@
 {
-    "$schema": "https://unpkg.com/knip@latest/schema.json",
-    "entry": ["src/client/frontend.tsx"],
-    "project": ["src/**/*.{ts,tsx}"],
-    "ignoreDependencies": ["tailwindcss"],
-    "ignoreFiles": [],
-    "ignore": ["data/**", "dist/**"]
+  "$schema": "./node_modules/knip/schema.json",
+  "entry": ["build.ts", "src/index.tsx", "src/client/frontend.tsx"],
+  "ignoreDependencies": ["tailwindcss"]
 }

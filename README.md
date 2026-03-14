@@ -1,21 +1,12 @@
-# bun-react-tailwind-template
+# Tektite TypeScript Service Template
 
-To install dependencies:
+This repository is a template for building a TypeScript service with a Bun backend and a React frontend. It includes a simple end-to-end message flow so the client, API layer, service layer, and persistence layer are wired together from the start.
 
-```bash
-bun install
-```
+## Tech stack
 
-To start a development server:
-
-```bash
-bun dev
-```
-
-To run for production:
-
-```bash
-bun start
-```
-
-This project was created using `bun init` in bun v1.3.0. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+- TypeScript for both frontend and backend code
+- Bun for the server runtime and local development workflow
+- React with React Query and React Router for the client application
+- Zod for API payload validation
+- PouchDB for simple backend persistence
+- Tailwind CSS for styling
